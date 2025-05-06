@@ -1,6 +1,9 @@
 package com.example.artsy_final
 
 import android.content.Context
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.content.edit
 import com.franmontiel.persistentcookiejar.PersistentCookieJar
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache
@@ -8,7 +11,6 @@ import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersisto
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
 
 
 object RetrofitInstance {
@@ -65,10 +67,18 @@ object UserManager {
     private const val KEY_EMAIL = "email"
     private const val KEY_ID = "id"
 
-    private var userName: String? = null
-    private var userEmail: String? = null
-    private var userID: String? = null
+    var userName by mutableStateOf<String?>(null)
+        private set
+    var userEmail by mutableStateOf<String?>(null)
+        private set
+    var userID by mutableStateOf<String?>(null)
+        private set
+    var artistID by mutableStateOf<String?>(null)
+        private set
 
+    fun saveArtistID(context: Context, id: String?){
+
+    }
     fun saveUser(context: Context, name: String?, email: String?, id: String?) {
         userName = name
         userEmail = email
@@ -90,9 +100,6 @@ object UserManager {
         userID = prefs.getString(KEY_ID, null)
     }
 
-    fun getUserName(): String? = userName
-    fun getUserEmail(): String? = userEmail
-    fun getUserID(): String? = userID
 
     fun clearUser(context: Context) {
         userName = null

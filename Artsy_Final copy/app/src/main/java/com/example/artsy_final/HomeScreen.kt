@@ -18,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -46,9 +47,12 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun Greeting(navController: NavController) {
     val uriHandler = LocalUriHandler.current
-    val name = UserManager.getUserName()
-    val email = UserManager.getUserEmail()
-    val id = UserManager.getUserID()
+    val context = LocalContext.current
+
+    val name = UserManager.userName
+    val id = UserManager.userID
+    val snackbarHostState = remember { SnackbarHostState() }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -66,7 +70,8 @@ fun Greeting(navController: NavController) {
                     )
                 }
                 if(name != null && id != null){
-                    AvatarWithDropdownMenu(id = id.toString(), navController = navController)
+                    AvatarWithDropdownMenu(id = id.toString(), navController = navController,
+                        snackbarHostState = snackbarHostState )
                 }
 
                 else{
@@ -77,7 +82,9 @@ fun Greeting(navController: NavController) {
 
             }
         )
-    }) { innerPadding ->
+    },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding),
@@ -117,10 +124,9 @@ fun Greeting(navController: NavController) {
 
 
 @Composable
-fun AvatarWithDropdownMenu(id: String, navController: NavController) {
+fun AvatarWithDropdownMenu(id: String, navController: NavController, snackbarHostState: SnackbarHostState) {
     var expanded by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
     // Avatar Button
     AsyncImage(
@@ -145,8 +151,9 @@ fun AvatarWithDropdownMenu(id: String, navController: NavController) {
                 coroutineScope.launch {
                     snackbarHostState.showSnackbar("Log Out successful")
                 }
+                CookieJarManager.clearCookies()
                 UserManager.clearUser(context)
-                println("Loggod out")
+                println("Logged out")
             }
         )
         DropdownMenuItem(
@@ -157,6 +164,7 @@ fun AvatarWithDropdownMenu(id: String, navController: NavController) {
                 coroutineScope.launch {
                     snackbarHostState.showSnackbar("Account successfully deleted")
                 }
+                CookieJarManager.clearCookies()
                 UserManager.clearUser(context)
                 println("Account deleted")
             }

@@ -11,11 +11,12 @@ import com.example.artsy_final.ui.theme.Artsy_FinalTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        UserManager.loadUser(this)
+        UserManager.loadUser(applicationContext)
         RetrofitInstance.initialize(applicationContext)
         setContent {
             Artsy_FinalTheme {
                 val navController = rememberNavController()
+
                 NavHost(
                     navController = navController,
                     startDestination = "home"
@@ -32,9 +33,7 @@ class MainActivity : ComponentActivity() {
                     composable("register") {
                         RegisterScreen(navController = navController)
                     }
-//                    composable("register") {
-//                        RegisterScreen(navController = navController)
-//                    }
+
                 }
             }
         }
